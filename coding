@@ -1,0 +1,58 @@
+
+
+
+######PCA####
+data.active <- data[,3:16]
+head(data.active)
+
+#normalise values
+normalize <- function(x, na.rm=TRUE){(x-min(x, na.rm=TRUE))/(max(x, na.rm=TRUE)-min(x, na.rm=TRUE))}
+
+# Apply function "normalize" to clay, silt and sand columns
+data_01 <- as.data.frame(apply(data.active, 2, normalize))
+
+head(data_01)
+
+res.pca <- prcomp(data_01, scale = TRUE)
+fviz_eig(res.pca)
+rownames(data) <- data$Sample
+
+# Eigenvalues
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+  
+# Results for Variables
+res.var <- get_pca_var(res.pca)
+res.var$coord          # Coordinates
+res.var$contrib        # Contributions to the PCs
+res.var$cos2           # Quality of representation 
+# Results for individuals
+res.ind <- get_pca_ind(res.pca)
+res.ind$coord          # Coordinates
+res.ind$contrib        # Contributions to the PCs
+res.ind$cos2           # Quality of representation 
+                
+# GRAPH Color individuals by groups
+groups <- as.factor(data$Period[1:34])
+fviz_pca_ind(res.pca, label="none",
+			 col.var = "#2E9FDF", 
+             col.ind = groups, 
+             legend.title = "Legend",
+             addEllipses = TRUE,  
+             ellipse.type="t",
+             repel = TRUE
+             ) + labs(title ="PCA") +
+             geom_text_repel(label= data$Sample, size = 2, nudge_x = 0.1, nudge_y = 0.1,
+    check_overlap = F
+  	)
+
+
+#Bivariate Scatterplot
+rownames(data) <- data$Sample
+	 
+ggplot(data, aes(x=Organic, y= CalciumCarbonate, color=Period, shape=Period)) + 
+ 	geom_point(size=3) + 
+  	geom_text_repel(label= data$Sample,size=3, color= "black", nudge_x = 0.1, nudge_y = 0.1, 
+    check_overlap = F
+  	)+ ggtitle("Plot of Organic vs CaCO3") +
+  xlab("Organic %") + ylab("CaCO3%") 
