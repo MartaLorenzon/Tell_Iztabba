@@ -1,4 +1,4 @@
-#Import data after averaging
+#Import data PXRF_1
 
 ######PCA####
 data.active <- data[,3:16]
