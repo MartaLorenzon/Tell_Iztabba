@@ -1,6 +1,4 @@
-
-
-
+#Import data PXRF_1
 ######PCA####
 data.active <- data[,3:16]
 head(data.active)
